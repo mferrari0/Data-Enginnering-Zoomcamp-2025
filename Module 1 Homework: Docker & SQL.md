@@ -118,36 +118,45 @@ ORDER BY somma DESC;
 and the top three zones were: "East Harlem North", "East Harlem South", "Morningside Heights" 
 
 # Question 6. Largest tip
-For the passengers picked up in Ocrober 2019 in the zone name "East Harlem North" which was the drop off zone that had the largest tip?
+For the passengers picked up in October 2019 in the zone name "East Harlem North" which was the drop off zone that had the largest tip?
 
 Note: it's tip , not trip
 
 We need the name of the zone, not the ID.
 
-Yorkville West
-JFK Airport
-East Harlem North
-East Harlem South
+- Yorkville West
+- JFK Airport
+- East Harlem North
+- East Harlem South
+
+## Answer
 
 SELECT
+	gtd."tip_amount",
     gtd."PULocationID",
     pu_zones."Zone" AS "PickupZone",
     gtd."DOLocationID",
-    do_zones."Zone" AS "DropoffZone",
+    do_zones."Zone" AS "DropoffZone"
+    
 FROM
     public.green_taxi_data AS gtd
+    
 JOIN
     public.zones AS pu_zones ON pu_zones."LocationID" = gtd."PULocationID"
+    
 JOIN
     public.zones AS do_zones ON do_zones."LocationID" = gtd."DOLocationID"
+    
 WHERE
     gtd.lpep_pickup_datetime >= '2019-10-19 00:00:00' AND gtd.lpep_pickup_datetime < '2019-10-20 00:00:00' AND pu_zones."Zone" = 'East Harlem North'
+    
+ORDER BY 
+	tip_amount DESC
+
+the first row has "JFK Airport" as dropoff zone.
 
 
-
-
-
-#Terraform
+# Terraform
 In this section homework we'll prepare the environment by creating resources in GCP with Terraform.
 
 In your VM on GCP/Laptop/GitHub Codespace install Terraform. Copy the files from the course repo here to your VM/Laptop/GitHub Codespace.
@@ -159,3 +168,77 @@ After updating the main.tf and variable.tf files run:
 
 terraform apply
 Paste the output of this command into the homework submission form.
+
+## Answer:
+
+$ terraform apply
+
+Terraform used the selected providers to generate the following execution plan. Resource actions are
+indicated with the following symbols:
+  + create
+
+Terraform will perform the following actions:
+
+  \# google_bigquery_dataset.demo_dataset will be created
+  + resource "google_bigquery_dataset" "demo_dataset" {
+      + creation_time              = (known after apply)
+      + dataset_id                 = "demo_dataset"
+      + default_collation          = (known after apply)
+      + delete_contents_on_destroy = false
+      + effective_labels           = (known after apply)
+      + etag                       = (known after apply)
+      + id                         = (known after apply)
+      + is_case_insensitive        = (known after apply)
+      + last_modified_time         = (known after apply)
+      + location                   = "US"
+      + max_time_travel_hours      = (known after apply)
+      + project                    = "steam-kingdom-442121-u6"
+      + self_link                  = (known after apply)
+      + storage_billing_model      = (known after apply)
+      + terraform_labels           = (known after apply)
+
+      + access (known after apply)
+    }
+
+  \# google_storage_bucket.demo-bucket will be created
+  + resource "google_storage_bucket" "demo-bucket" {
+      + effective_labels            = (known after apply)
+      + force_destroy               = true
+      + id                          = (known after apply)
+      + location                    = "US"
+      + name                        = "steam-kingdom-442121-u6-terra-bucket"
+      + project                     = (known after apply)
+      + public_access_prevention    = (known after apply)
+      + self_link                   = (known after apply)
+      + storage_class               = "STANDARD"
+      + terraform_labels            = (known after apply)
+      + uniform_bucket_level_access = (known after apply)
+      + url                         = (known after apply)
+
+      + lifecycle_rule {
+          + action {
+              + type          = "AbortIncompleteMultipartUpload"
+                \# (1 unchanged attribute hidden)
+            }
+          + condition {
+              + age                    = 1
+              + matches_prefix         = []
+              + matches_storage_class  = []
+              + matches_suffix         = []
+              + with_state             = (known after apply)
+                \# (3 unchanged attributes hidden)
+            }
+        }
+
+      + versioning (known after apply)
+
+      + website (known after apply)
+    }
+
+Plan: 2 to add, 0 to change, 0 to destroy.
+
+Do you want to perform these actions?
+  Terraform will perform the actions described above.
+  Only 'yes' will be accepted to approve.
+
+  Enter a value: 
