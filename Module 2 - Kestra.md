@@ -93,8 +93,3 @@ used to create the fact_trips table and obtained 196 rows. So I don't know what 
 
 #### Answer: as stated in https://kestra.io/docs/workflow-components/triggers/schedule-trigger, I should use:  timezone: America/New_York
 
-
-## Submitting the solutions
-
-* Form for submitting: https://courses.datatalks.club/de-zoomcamp-2025/homework/hw2
-* Check the link above to see the due date
