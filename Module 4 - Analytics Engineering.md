@@ -21,6 +21,9 @@ Answer: It applies a _limit 100_ only to our staging models
 - The code from the development branch we are requesting to merge to main
 
 
+Answer: - The code from the development branch we are requesting to merge to main
+
+
 ### Question 3 (2 points)
 
 **What is the count of records in the model fact_fhv_trips after running all dependencies with the test run variable disabled (:false)?**  
@@ -36,6 +39,80 @@ Run the dbt model without limits (is_test_run: false).
 - 32998722
 - 42998722
 
+
+Answer:
+
+this is the sql file for the staging model:
+
+``` sql
+  {{
+      config(
+          materialized='view'
+      )
+  }}
+  
+  
+  WITH source_data AS (
+      SELECT
+          dispatching_base_num,
+          pickup_datetime,
+          dropOff_datetime,
+          PUlocationID,
+          DOlocationID,
+          SR_Flag,
+          Affiliated_base_number
+      FROM {{ source('staging','fhv') }}
+      WHERE EXTRACT(YEAR FROM pickup_datetime) = 2019
+  )
+  
+  SELECT
+      dispatching_base_num,
+      pickup_datetime,
+      dropOff_datetime,
+      PUlocationID,
+      DOlocationID,
+      SR_Flag,
+      Affiliated_base_number
+  FROM source_data
+
+```
+
+and this is the core model:
+
+``` sql
+
+{{
+    config(
+        materialized='table'
+    )
+}}
+
+WITH stg_fhv AS (
+    SELECT *
+    FROM {{ ref('stg_fhv') }}
+),
+dim_zones AS (
+    SELECT *
+    FROM {{ ref('dim_zones') }}
+)
+
+SELECT stg_fhv.*,
+        pickup_zone.locationid AS pickup_locationid,
+        pickup_zone.borough AS pickup_borough,
+        pickup_zone.zone AS pickup_zone,
+        dropoff_zone.locationid AS dropoff_locationid,
+        dropoff_zone.borough AS dropoff_borough,
+        dropoff_zone.zone AS dropoff_zone
+FROM stg_fhv
+INNER JOIN dim_zones AS pickup_zone
+ON stg_fhv.PUlocationID = pickup_zone.locationid
+INNER JOIN dim_zones AS dropoff_zone
+ON stg_fhv.DOlocationID = dropoff_zone.locationid
+
+```
+
+the generated table has: 41,214,474 rows
+
 ### Question 4 (2 points)
 
 **What is the service that had the most rides during the month of July 2019 month with the biggest amount of rides after building a tile for the fact_fhv_trips table and the fact_trips tile as seen in the videos?**
@@ -46,3 +123,7 @@ Create a dashboard with some tiles that you find interesting to explore the data
 - Green
 - Yellow
 - FHV and Green
+
+
+
+
