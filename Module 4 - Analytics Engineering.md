@@ -124,6 +124,8 @@ Create a dashboard with some tiles that you find interesting to explore the data
 - Yellow
 - FHV and Green
 
+Answer: the plot shows Yellow caps reching more then 3M rides compared to the 2M from the FHV and the 0.4M for the green taxis
+
 
 
 
